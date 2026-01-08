@@ -125,6 +125,30 @@ app.post('/accounts', async (req, res) => {
 
 
 
+app.post('/accounts', async (req, res) => {
+  try {
+    const { Name, Phone, Industry } = req.body;
+
+    const auth = await loginToSalesforce(); // already unna login function
+
+    const result = await axios.post(
+      `${auth.instance_url}/services/data/v59.0/sobjects/Account`,
+      { Name, Phone, Industry },
+      {
+        headers: {
+          Authorization: `Bearer ${auth.access_token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    res.json(result.data);
+  } catch (e) {
+    res.status(500).json({ error: 'Account create failed' });
+  }
+});
+
+
 
 // ▶️ Start server
 app.listen(3000, () => {
